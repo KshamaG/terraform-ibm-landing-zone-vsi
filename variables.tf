@@ -240,63 +240,63 @@ variable "security_group" {
 #   )
 #   default = []
 
-  validation {
-    error_message = "Load balancer names must match the regex pattern ^([a-z]|[a-z][-a-z0-9]*[a-z0-9])$."
-    condition = length(distinct(
-      flatten([
-        # Check through rules
-        for load_balancer in var.load_balancers :
-        # Return false if direction is not valid
-        false if !can(regex("^([a-z]|[a-z][-a-z0-9]*[a-z0-9])$", load_balancer.name))
-      ])
-    )) == 0
-  }
+#   validation {
+#     error_message = "Load balancer names must match the regex pattern ^([a-z]|[a-z][-a-z0-9]*[a-z0-9])$."
+#     condition = length(distinct(
+#       flatten([
+#         # Check through rules
+#         for load_balancer in var.load_balancers :
+#         # Return false if direction is not valid
+#         false if !can(regex("^([a-z]|[a-z][-a-z0-9]*[a-z0-9])$", load_balancer.name))
+#       ])
+#     )) == 0
+#   }
 
-  validation {
-    error_message = "Load Balancer Pool algorithm can only be `round_robin`, `weighted_round_robin`, or `least_connections`."
-    condition = length(
-      flatten([
-        for load_balancer in var.load_balancers :
-        true if !contains(["round_robin", "weighted_round_robin", "least_connections"], load_balancer.algorithm)
-      ])
-    ) == 0
-  }
+#   validation {
+#     error_message = "Load Balancer Pool algorithm can only be `round_robin`, `weighted_round_robin`, or `least_connections`."
+#     condition = length(
+#       flatten([
+#         for load_balancer in var.load_balancers :
+#         true if !contains(["round_robin", "weighted_round_robin", "least_connections"], load_balancer.algorithm)
+#       ])
+#     ) == 0
+#   }
 
-  validation {
-    error_message = "Load Balancer Pool Protocol can only be `http`, `https`, or `tcp`."
-    condition = length(
-      flatten([
-        for load_balancer in var.load_balancers :
-        true if !contains(["http", "https", "tcp"], load_balancer.protocol)
-      ])
-    ) == 0
-  }
+#   validation {
+#     error_message = "Load Balancer Pool Protocol can only be `http`, `https`, or `tcp`."
+#     condition = length(
+#       flatten([
+#         for load_balancer in var.load_balancers :
+#         true if !contains(["http", "https", "tcp"], load_balancer.protocol)
+#       ])
+#     ) == 0
+#   }
 
-  validation {
-    error_message = "Pool health delay must be greater than the timeout."
-    condition = length(
-      flatten([
-        for load_balancer in var.load_balancers :
-        true if load_balancer.health_delay < load_balancer.health_timeout
-      ])
-    ) == 0
-  }
+#   validation {
+#     error_message = "Pool health delay must be greater than the timeout."
+#     condition = length(
+#       flatten([
+#         for load_balancer in var.load_balancers :
+#         true if load_balancer.health_delay < load_balancer.health_timeout
+#       ])
+#     ) == 0
+#   }
 
-  validation {
-    error_message = "Load Balancer Pool Health Check Type can only be `http`, `https`, or `tcp`."
-    condition = length(
-      flatten([
-        for load_balancer in var.load_balancers :
-        true if !contains(["http", "https", "tcp"], load_balancer.health_type)
-      ])
-    ) == 0
-  }
+#   validation {
+#     error_message = "Load Balancer Pool Health Check Type can only be `http`, `https`, or `tcp`."
+#     condition = length(
+#       flatten([
+#         for load_balancer in var.load_balancers :
+#         true if !contains(["http", "https", "tcp"], load_balancer.health_type)
+#       ])
+#     ) == 0
+#   }
 
-  validation {
-    error_message = "Each load balancer must have a unique name."
-    condition     = length(distinct(var.load_balancers.*.name)) == length(var.load_balancers.*.name)
-  }
-}
+#   validation {
+#     error_message = "Each load balancer must have a unique name."
+#     condition     = length(distinct(var.load_balancers.*.name)) == length(var.load_balancers.*.name)
+#   }
+# }
 
 ##############################################################################
 
