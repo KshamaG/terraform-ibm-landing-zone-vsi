@@ -155,90 +155,90 @@ variable "security_group" {
 
 }
 
-variable "security_group_ids" {
-  description = "IDs of additional security groups to be added to VSI deployment primary interface. A VSI interface can have a maximum of 5 security groups."
-  type        = list(string)
-  default     = []
+# variable "security_group_ids" {
+#   description = "IDs of additional security groups to be added to VSI deployment primary interface. A VSI interface can have a maximum of 5 security groups."
+#   type        = list(string)
+#   default     = []
 
-  validation {
-    error_message = "Security group IDs must be unique."
-    condition     = length(var.security_group_ids) == length(distinct(var.security_group_ids))
-  }
+#   validation {
+#     error_message = "Security group IDs must be unique."
+#     condition     = length(var.security_group_ids) == length(distinct(var.security_group_ids))
+#   }
 
-  validation {
-    error_message = "No more than 5 security groups can be added to a VSI deployment."
-    condition     = length(var.security_group_ids) <= 5
-  }
-}
+#   validation {
+#     error_message = "No more than 5 security groups can be added to a VSI deployment."
+#     condition     = length(var.security_group_ids) <= 5
+#   }
+# }
 
-variable "block_storage_volumes" {
-  description = "List describing the block storage volumes that will be attached to each vsi"
-  type = list(
-    object({
-      name           = string
-      profile        = string
-      capacity       = optional(number)
-      iops           = optional(number)
-      encryption_key = optional(string)
-    })
-  )
-  default = []
+# variable "block_storage_volumes" {
+#   description = "List describing the block storage volumes that will be attached to each vsi"
+#   type = list(
+#     object({
+#       name           = string
+#       profile        = string
+#       capacity       = optional(number)
+#       iops           = optional(number)
+#       encryption_key = optional(string)
+#     })
+#   )
+#   default = []
 
-  validation {
-    error_message = "Each block storage volume must have a unique name."
-    condition     = length(distinct(var.block_storage_volumes.*.name)) == length(var.block_storage_volumes)
-  }
-}
+#   validation {
+#     error_message = "Each block storage volume must have a unique name."
+#     condition     = length(distinct(var.block_storage_volumes.*.name)) == length(var.block_storage_volumes)
+#   }
+# }
 
-variable "load_balancers" {
-  description = "Load balancers to add to VSI"
-  type = list(
-    object({
-      name              = string
-      type              = string
-      listener_port     = number
-      listener_protocol = string
-      connection_limit  = number
-      algorithm         = string
-      protocol          = string
-      health_delay      = number
-      health_retries    = number
-      health_timeout    = number
-      health_type       = string
-      pool_member_port  = string
-      security_group = optional(
-        object({
-          name = string
-          rules = list(
-            object({
-              name      = string
-              direction = string
-              source    = string
-              tcp = optional(
-                object({
-                  port_max = number
-                  port_min = number
-                })
-              )
-              udp = optional(
-                object({
-                  port_max = number
-                  port_min = number
-                })
-              )
-              icmp = optional(
-                object({
-                  type = number
-                  code = number
-                })
-              )
-            })
-          )
-        })
-      )
-    })
-  )
-  default = []
+# variable "load_balancers" {
+#   description = "Load balancers to add to VSI"
+#   type = list(
+#     object({
+#       name              = string
+#       type              = string
+#       listener_port     = number
+#       listener_protocol = string
+#       connection_limit  = number
+#       algorithm         = string
+#       protocol          = string
+#       health_delay      = number
+#       health_retries    = number
+#       health_timeout    = number
+#       health_type       = string
+#       pool_member_port  = string
+#       security_group = optional(
+#         object({
+#           name = string
+#           rules = list(
+#             object({
+#               name      = string
+#               direction = string
+#               source    = string
+#               tcp = optional(
+#                 object({
+#                   port_max = number
+#                   port_min = number
+#                 })
+#               )
+#               udp = optional(
+#                 object({
+#                   port_max = number
+#                   port_min = number
+#                 })
+#               )
+#               icmp = optional(
+#                 object({
+#                   type = number
+#                   code = number
+#                 })
+#               )
+#             })
+#           )
+#         })
+#       )
+#     })
+#   )
+#   default = []
 
   validation {
     error_message = "Load balancer names must match the regex pattern ^([a-z]|[a-z][-a-z0-9]*[a-z0-9])$."
@@ -305,61 +305,61 @@ variable "load_balancers" {
 # Secondary Interface Variables
 ##############################################################################
 
-variable "secondary_subnets" {
-  description = "List of secondary network interfaces to add to vsi secondary subnets must be in the same zone as VSI. This is only recommended for use with a deployment of 1 VSI."
-  type = list(
-    object({
-      name = string
-      id   = string
-      zone = string
-      cidr = string
-    })
-  )
-  default = []
-}
+# variable "secondary_subnets" {
+#   description = "List of secondary network interfaces to add to vsi secondary subnets must be in the same zone as VSI. This is only recommended for use with a deployment of 1 VSI."
+#   type = list(
+#     object({
+#       name = string
+#       id   = string
+#       zone = string
+#       cidr = string
+#     })
+#   )
+#   default = []
+# }
 
-variable "secondary_use_vsi_security_group" {
-  description = "Use the security group created by this module in the secondary interface"
-  type        = bool
-  default     = false
-}
+# variable "secondary_use_vsi_security_group" {
+#   description = "Use the security group created by this module in the secondary interface"
+#   type        = bool
+#   default     = false
+# }
 
-variable "secondary_security_groups" {
-  description = "IDs of additional security groups to be added to VSI deployment secondary interfaces. A VSI interface can have a maximum of 5 security groups."
-  type = list(
-    object({
-      security_group_id = string
-      interface_name    = string
-    })
-  )
-  default = []
+# variable "secondary_security_groups" {
+#   description = "IDs of additional security groups to be added to VSI deployment secondary interfaces. A VSI interface can have a maximum of 5 security groups."
+#   type = list(
+#     object({
+#       security_group_id = string
+#       interface_name    = string
+#     })
+#   )
+#   default = []
 
-  validation {
-    error_message = "Security group IDs must be unique."
-    condition     = length(var.secondary_security_groups) == length(distinct(var.secondary_security_groups))
-  }
+#   validation {
+#     error_message = "Security group IDs must be unique."
+#     condition     = length(var.secondary_security_groups) == length(distinct(var.secondary_security_groups))
+#   }
 
-  validation {
-    error_message = "No more than 5 security groups can be added to a VSI deployment."
-    condition     = length(var.secondary_security_groups) <= 5
-  }
-}
+#   validation {
+#     error_message = "No more than 5 security groups can be added to a VSI deployment."
+#     condition     = length(var.secondary_security_groups) <= 5
+#   }
+# }
 
-variable "secondary_floating_ips" {
-  description = "List of secondary interfaces to add floating ips"
-  type        = list(string)
-  default     = []
+# variable "secondary_floating_ips" {
+#   description = "List of secondary interfaces to add floating ips"
+#   type        = list(string)
+#   default     = []
 
-  validation {
-    error_message = "Secondary floating IPs must contain a unique list of interfaces."
-    condition     = length(var.secondary_floating_ips) == length(distinct(var.secondary_floating_ips))
-  }
-}
+#   validation {
+#     error_message = "Secondary floating IPs must contain a unique list of interfaces."
+#     condition     = length(var.secondary_floating_ips) == length(distinct(var.secondary_floating_ips))
+#   }
+# }
 
-variable "secondary_allow_ip_spoofing" {
-  description = "Allow IP spoofing on additional network interfaces"
-  type        = bool
-  default     = false
-}
+# variable "secondary_allow_ip_spoofing" {
+#   description = "Allow IP spoofing on additional network interfaces"
+#   type        = bool
+#   default     = false
+# }
 
 ##############################################################################

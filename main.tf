@@ -4,7 +4,6 @@
 locals {
 
   # Create list of VSI using subnets and VSI per subnet
-  # Create list of VSI using subnets and VSI per subnet
   vsi_list = flatten([
     # For each number in a range from 0 to VSI per subnet
     for count in range(var.vsi_per_subnet) : [
@@ -78,10 +77,7 @@ resource "ibm_is_instance" "vsi" {
 
   primary_network_interface {
     subnet = each.value.subnet_id
-    security_groups = flatten([
-      (var.create_security_group ? [ibm_is_security_group.security_group[var.security_group.name].id] : [local.default_security_group_id]),
-      var.security_group_ids
-    ])
+    security_groups = [local.default_security_group_id]
     allow_ip_spoofing = var.allow_ip_spoofing
   }
 
@@ -117,12 +113,12 @@ resource "ibm_is_instance" "vsi" {
 # Optionally create floating IP
 ##############################################################################
 
-resource "ibm_is_floating_ip" "vsi_fip" {
-  for_each = var.enable_floating_ip ? ibm_is_instance.vsi : {}
-  name     = "${each.value.name}-fip"
-  target   = each.value.primary_network_interface[0].id
-  tags     = var.tags
-}
+# resource "ibm_is_floating_ip" "vsi_fip" {
+#   for_each = var.enable_floating_ip ? ibm_is_instance.vsi : {}
+#   name     = "${each.value.name}-fip"
+#   target   = each.value.primary_network_interface[0].id
+#   tags     = var.tags
+# }
 
 # resource "ibm_is_floating_ip" "secondary_fip" {
 #   for_each = length(var.secondary_floating_ips) == 0 ? {} : {
