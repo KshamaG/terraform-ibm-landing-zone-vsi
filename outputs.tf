@@ -10,11 +10,6 @@ output "ids" {
   ]
 }
 
-output "vsi_security_group" {
-  description = "Security group for the VSI"
-  value       = var.security_group == null ? null : ibm_is_security_group.security_group.crn
-}
-
 output "list" {
   description = "A list of VSI with name, id, zone, and primary ipv4 address"
   value = [
