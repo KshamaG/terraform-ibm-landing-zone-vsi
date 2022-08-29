@@ -25,20 +25,20 @@ locals {
     server.name => server
   }
 
-  secondary_fip_list = flatten([
-    # For each interface in list of floating ips
-    for interface in var.secondary_floating_ips :
-    [
-      # For each virtual server
-      for instance in ibm_is_instance.vsi :
-      {
-        # fip name
-        name = "${instance.name}-${interface}-fip"
-        # target interface at the same index as subnet name
-        target = instance.network_interfaces[index(var.secondary_subnets.*.name, interface)].id
-      }
-    ]
-  ])
+  # secondary_fip_list = flatten([
+  #   # For each interface in list of floating ips
+  #   for interface in var.secondary_floating_ips :
+  #   [
+  #     # For each virtual server
+  #     for instance in ibm_is_instance.vsi :
+  #     {
+  #       # fip name
+  #       name = "${instance.name}-${interface}-fip"
+  #       # target interface at the same index as subnet name
+  #       target = instance.network_interfaces[index(var.secondary_subnets.*.name, interface)].id
+  #     }
+  #   ]
+  # ])
 }
 
 ##############################################################################
@@ -85,20 +85,20 @@ resource "ibm_is_instance" "vsi" {
     allow_ip_spoofing = var.allow_ip_spoofing
   }
 
-  dynamic "network_interfaces" {
-    for_each = var.secondary_subnets == null ? [] : var.secondary_subnets
-    content {
-      subnet = network_interfaces.value.id
-      security_groups = flatten([
-        (var.create_security_group && var.secondary_use_vsi_security_group ? [ibm_is_security_group.security_group[var.security_group.name].id] : []),
-        [
-          for group in var.secondary_security_groups :
-          group.security_group_id if group.interface_name == network_interfaces.value.name
-        ]
-      ])
-      allow_ip_spoofing = var.secondary_allow_ip_spoofing
-    }
-  }
+  # dynamic "network_interfaces" {
+  #   for_each = var.secondary_subnets == null ? [] : var.secondary_subnets
+  #   content {
+  #     subnet = network_interfaces.value.id
+  #     security_groups = flatten([
+  #       (var.create_security_group && var.secondary_use_vsi_security_group ? [ibm_is_security_group.security_group[var.security_group.name].id] : []),
+  #       [
+  #         for group in var.secondary_security_groups :
+  #         group.security_group_id if group.interface_name == network_interfaces.value.name
+  #       ]
+  #     ])
+  #     allow_ip_spoofing = var.secondary_allow_ip_spoofing
+  #   }
+  # }
 
   boot_volume {
     encryption = var.boot_volume_encryption_key == "" ? null : var.boot_volume_encryption_key
@@ -124,14 +124,14 @@ resource "ibm_is_floating_ip" "vsi_fip" {
   tags     = var.tags
 }
 
-resource "ibm_is_floating_ip" "secondary_fip" {
-  for_each = length(var.secondary_floating_ips) == 0 ? {} : {
-    for interface in local.secondary_fip_list :
-    (interface.name) => interface
-  }
-  name   = each.key
-  target = each.value.target
-  tags   = var.tags
-}
+# resource "ibm_is_floating_ip" "secondary_fip" {
+#   for_each = length(var.secondary_floating_ips) == 0 ? {} : {
+#     for interface in local.secondary_fip_list :
+#     (interface.name) => interface
+#   }
+#   name   = each.key
+#   target = each.value.target
+#   tags   = var.tags
+# }
 
 ##############################################################################
