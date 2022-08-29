@@ -105,7 +105,7 @@ resource "ibm_is_instance" "vsi" {
   }
 
   # Only add volumes if volumes are being created by the module
-  volumes = length(var.block_storage_volumes) == 0 ? [] : local.volume_by_vsi[each.key]
+  # volumes = length(var.block_storage_volumes) == 0 ? [] : local.volume_by_vsi[each.key]
 }
 
 
